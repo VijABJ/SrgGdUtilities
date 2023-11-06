@@ -9,17 +9,17 @@ struct default_value;
 
 template<>
 struct default_value<bool> {
-   static constexpr bool value = false;
+    static constexpr bool value = false;
 };
 
 template<>
 struct default_value<int64_t> {
-   static constexpr int64_t value = 0ll;
+    static constexpr int64_t value = 0ll;
 };
 
 template<>
 struct default_value<double> {
-   static constexpr double value = 0.0;
+    static constexpr double value = 0.0;
 };
 
 template<>
@@ -34,32 +34,33 @@ public:
     undoable_t() : current_(default_value<T>::value), previous_(default_value<T>::value), changed_(false), marked_(false) {}
     undoable_t(T initial) : current_(initial), previous_(initial), changed_(false), marked_(false) {}
 
-    void mark() { 
-        previous_ = current_; 
+    void mark() {
+        previous_ = current_;
         changed_ = false;
         marked_ = true;
     }
-    void unmark() {
-        marked_ = false;
-    }
+    // void unmark() {
+    //     marked_ = false;
+    // }
     void restore() {
-        if(changed_) {
+        if (changed_) {
             current_ = previous_;
             changed_ = false;
             marked_ = false;
         }
     }
-    bool hasChanged() const { 
-        return changed_; 
+    bool hasChanged() const {
+        return changed_;
     }
-    void resetChange() {
+    void touch() {
+        marked_ = false;
         changed_ = false;
     }
-    T getValue() const { 
-        return current_; 
+    T getValue() const {
+        return current_;
     }
     void assignValue(T newValue) {
-        if(current_ != newValue) {
+        if (current_ != newValue) {
             current_ = newValue;
         }
     }
@@ -76,8 +77,8 @@ public:
         return current_;
     }
     undoable_t& operator=(const undoable_t& other) {
-        if(this != &other) {
-            if(!marked_) {
+        if (this != &other) {
+            if (!marked_) {
                 previous_ = current_;
             }
             current_ = other.current_;
@@ -86,7 +87,7 @@ public:
         return *this;
     }
     undoable_t& operator=(const T& other) {
-        if(!marked_) {
+        if (!marked_) {
             previous_ = current_;
         }
         current_ = other;

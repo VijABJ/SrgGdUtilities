@@ -1,4 +1,5 @@
 #include "files_source.h"
+#include "common_utils.h"
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/classes/dir_access.hpp>
@@ -18,14 +19,36 @@ PathResolver::PathResolver() : sourceFolder_(String()), createFolderIfMissing_(f
 String PathResolver::folderActual() const
 {
     OS* os = OS::get_singleton();
+    auto result = sourceFolder_;
     if (appRelative_ && !os->has_feature("editor")) {
         auto exePath = os->get_executable_path().get_base_dir();
-        auto result = exePath.path_join(sourceFolder_);
-        return result;
+        result = exePath.path_join(sourceFolder_);
     }
 
-    return sourceFolder_;
+    if (createFolderIfMissing_) {
+        ensureFolderExists(result);
+    }
+
+    return result;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FileLocator::_bind_methods()
+{
+    DECLARE_PROPERTY(FileLocator, BaseFilename, newName, Variant::STRING);
+    DECLARE_PROPERTY_READONLY(FileLocator, ResolvedPath, Variant::STRING, getResolvedPath);
+}
+
+FileLocator::FileLocator() : baseFilename_(String())
+{}
+
+String FileLocator::getResolvedPath() const
+{
+    auto workFolder = folderActual();
+    return workFolder.path_join(baseFilename_);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,43 +64,45 @@ void PathScannerBase::_bind_methods()
 PathScannerBase::PathScannerBase() : recursive_(false), alwaysRefresh_(false), items_()
 {}
 
-Array PathScannerBase::retrieveItems(const bool prefixItems) 
+Array PathScannerBase::retrieveItems(const bool prefixItems)
 {
     Array result;
 
     // if we are supposed to be app-relative, then we shouldn't do anything otherwise
     OS* os = OS::get_singleton();
-    if (appRelative_ && os->has_feature("editor")) 
+    if (appRelative_ && os->has_feature("editor"))
         return result;
 
     // bail out on empty source folder
     String workFolder = folderActual();
-    if(workFolder.is_empty())
+    if (workFolder.is_empty())
         return result;
 
     // check if folder exists.  if not, check if we have to create.
     // if both failed, bail out
-    if(!DirAccess::dir_exists_absolute(workFolder)) {
-        if(createFolderIfMissing_)
+    if (!DirAccess::dir_exists_absolute(workFolder)) {
+        if (createFolderIfMissing_)
             DirAccess::make_dir_recursive_absolute(workFolder);
         else
             return result;
     }
 
     // clear the list if we're supposed to always refresh
-    if(alwaysRefresh_) {
+    if (alwaysRefresh_) {
         items_.clear();
-    } else if(items_.size() == 0) {
+    }
+    else if (items_.size() == 0) {
         gatherItems(workFolder);
     }
 
     // in here, we convert our list to Array format
-    if(!prefixItems) {
-        for(auto& item : items_) {
+    if (!prefixItems) {
+        for (auto& item : items_) {
             result.append(item);
         }
-    } else {
-        for(auto& item : items_) {
+    }
+    else {
+        for (auto& item : items_) {
             result.append(workFolder.path_join(item));
         }
     }
@@ -91,7 +116,7 @@ void DirectoryList::_bind_methods()
 {
 }
 
-DirectoryList::DirectoryList()  
+DirectoryList::DirectoryList()
 {}
 
 void DirectoryList::gatherItems(const String baseFolder)
@@ -103,11 +128,11 @@ void DirectoryList::gatherItems(const String baseFolder)
 void DirectoryList::scanRecursive(const String currentFolder, const int64_t subStrStartIndex)
 {
     auto dirs = DirAccess::get_directories_at(currentFolder);
-    for(int i = 0; i < dirs.size(); i++) {
+    for (int i = 0; i < dirs.size(); i++) {
         auto thisPath = currentFolder.path_join(dirs[i]);
         auto itemToAdd = thisPath.substr(subStrStartIndex);
         items_.push_back(itemToAdd);
-        if(recursive_)
+        if (recursive_)
             scanRecursive(thisPath, subStrStartIndex);
     }
 }
@@ -135,10 +160,10 @@ void FileList::scanRecursive(const String currentFolder, const Array filters, co
 {
     // we need to get the files first, since this is, after all, a FileList
     auto files = DirAccess::get_files_at(currentFolder);
-    for(int i = 0; i < files.size(); i++) {
+    for (int i = 0; i < files.size(); i++) {
         bool includeThis = (filters.size() == 0);
         auto file = files[i];
-        if(!includeThis) {
+        if (!includeThis) {
             for (int j = 0; j < filters.size(); j++) {
                 if (file.ends_with(filters[j])) {
                     includeThis = true;
@@ -153,17 +178,15 @@ void FileList::scanRecursive(const String currentFolder, const Array filters, co
     }
 
     // go down a directory level if we're recursive
-    if(recursive_) {
+    if (recursive_) {
         auto dirs = DirAccess::get_directories_at(currentFolder);
-        for(int i = 0; i < dirs.size(); i++) {
+        for (int i = 0; i < dirs.size(); i++) {
             auto thisPath = currentFolder.path_join(dirs[i]);
-            if(recursive_)
+            if (recursive_)
                 scanRecursive(thisPath, filters, subStrStartIndex);
         }
     }
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -178,24 +201,14 @@ void PathNamesCollection::_bind_methods()
     ClassDB::bind_method(D_METHOD("getScannerAt", "index"), &PathNamesCollection::getScannerAt);
     ClassDB::bind_method(D_METHOD("isItemEnabled", "index"), &PathNamesCollection::isItemEnabled);
 
-    //ClassDB::bind_method(D_METHOD("setPrimary", "newItem"), &PathNamesCollection::setPrimary);
-    //ClassDB::bind_method(D_METHOD("getPrimary"), &PathNamesCollection::getPrimary);
-    //ClassDB::bind_method(D_METHOD("setSecondary", "newItem"), &PathNamesCollection::setSecondary);
-    //ClassDB::bind_method(D_METHOD("getSecondary"), &PathNamesCollection::getSecondary);
-
-    //ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "Primary", PROPERTY_HINT_RESOURCE_TYPE, "PathScannerBase"), "setPrimary", "getPrimary");
-    //ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "Secondary", PROPERTY_HINT_RESOURCE_TYPE, "PathScannerBase"), "setSecondary", "getSecondary");
-
     //ADD_ARRAY_COUNT("items_", "itemCount", "setCount", "getCount", "item_");
     ClassDB::add_property(get_class_static(),
         PropertyInfo(Variant::INT, "itemCount", PROPERTY_HINT_NONE, "",
-            PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_ARRAY, "items_,items_"),
+            PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_ARRAY, "Items,items_"),
         "setCount", "getCount");
-
 }
 
 PathNamesCollection::PathNamesCollection() : items_()
-    //, primary_(), secondary_()
 {
 }
 
@@ -215,12 +228,26 @@ void PathNamesCollection::setCount(int64_t newCount)
 Array PathNamesCollection::getItems()
 {
     Array result;
+
+    for (auto& item : items_) {
+        if (item.Enabled) {
+            result.append_array(item.Scanner->getItems());
+        }
+    }
+
     return result;
 }
 
 Array PathNamesCollection::getItemsLong()
 {
     Array result;
+
+    for (auto& item : items_) {
+        if (item.Enabled) {
+            result.append_array(item.Scanner->getItemsLong());
+        }
+    }
+
     return result;
 }
 
@@ -246,7 +273,7 @@ bool PathNamesCollection::isItemEnabled(const int64_t index) const
     return false;
 }
 
-void PathNamesCollection::_get_property_list(List<PropertyInfo>* p_list) const 
+void PathNamesCollection::_get_property_list(List<PropertyInfo>* p_list) const
 {
     DEBUG("_get_property_list()");
     for (int i = 0; i < items_.size(); i++) {
@@ -272,7 +299,7 @@ bool PathNamesCollection::_set(const StringName& p_name, const Variant& p_value)
             return true;
         }
         else if (components[1] == "Enabled") {
-            auto enabled = (bool) p_value;
+            auto enabled = (bool)p_value;
             items_[item_index].Enabled = enabled;
             return true;
         }

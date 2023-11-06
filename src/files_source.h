@@ -43,6 +43,24 @@ protected:
     String folderActual() const;
 };
 
+/// wraps a file location to make it easier to use between design time and runtime
+class FileLocator GDX_SUBCLASS(PathResolver)
+{
+    GDX_CLASS_PREFIX(FileLocator, PathResolver);
+
+public:
+    FileLocator();
+    virtual ~FileLocator() {};
+
+    String getBaseFilename() const { return baseFilename_; }
+    void setBaseFilename(const String newName) { baseFilename_ = newName; }
+
+    String getResolvedPath() const;
+
+private:
+    String baseFilename_;
+};
+
 ///
 /// Contains storage for items after scanning a given folder.
 /// This is basically an abstract class for later implementations.
@@ -124,12 +142,6 @@ public:
     PathNamesCollection();
     virtual ~PathNamesCollection() {};
 
-    //Ref<PathScannerBase> getPrimary() const { return primary_; }
-    //void setPrimary(Ref<PathScannerBase> newItem) { primary_ = newItem; }
-
-    //Ref<PathScannerBase> getSecondary() const { return secondary_; }
-    //void setSecondary(Ref<PathScannerBase> newItem) { secondary_ = newItem; }
-
     Array getItems();
     Array getItemsLong();
 
@@ -148,8 +160,6 @@ protected:
     };
 
     std::vector<CollectibleItem> items_;
-    //Ref<PathScannerBase> primary_;
-    //Ref<PathScannerBase> secondary_;
 
     bool _set(const StringName& p_name, const Variant& p_value);
     bool _get(const StringName& p_name, Variant& r_ret) const;

@@ -6,33 +6,25 @@
 #include <godot_cpp/classes/object.hpp>
 using namespace godot;
 
-#include <type_traits>
+#include "config_settings.h"
 #include <map>
-#include <string>
 #include <vector>
 
-#include "config_settings.h"
 
-class NamedStatistic GDX_SUBCLASS(Node)
+class NamedStatistics GDX_SUBCLASS(Node)
 {
-    GDX_CLASS_PREFIX(NamedStatistic, Node);
+    GDX_CLASS_PREFIX(NamedStatistics, Node);
 
 public:
-    NamedStatistic();
-    virtual ~NamedStatistic() {};
+    NamedStatistics() : items_() {}
+    virtual ~NamedStatistics() {}
 
-    void initialize(String stringId, const double initialValue);
-
-    String getStringId() const { return stringId_; }
-    void setStringId(String stringId) { stringId_ = stringId; }
-
-    double getValue() const { return value_; }
-    void setValue(double newValue) { value_ = newValue; }
-    void addValue(double newValue) { value_ += newValue; }
+    Dictionary getItems() const;
+    void setItems(Dictionary items);
+    void appendItems(Dictionary items);
 
 private:
-    String stringId_;
-    double value_;
+    std::map<std::string, std::string> items_;
 };
 
 
@@ -44,13 +36,11 @@ public:
     PlayerProfile();
     virtual ~PlayerProfile();
 
-    // returns array of named statistics
-    Array getStatistics();
-    // returns a specific statistic.  will create it if it doesn't exist.
-    NamedStatistic* getStatistic(String stringId);
-    
+    NamedStatistics* getStatistics() const { return statistics_; }
+    ConfigItems* getSettings() { return gameplaySettings_; }
+
     void setPlayerId(const String newId) { playerId_ = newId; }
-    String getPlayerId() const { return playerId_; }
+    String getPlayerId();
     void setPlayerName(const String newName) { playerName_ = newName; }
     String getPlayerName() const { return playerName_; }
     void setPortraitFile(const String filename) { portraitFile_ = filename; }
@@ -59,20 +49,14 @@ public:
     void setUseSettings(bool state) { useSettings_ = state; }
     bool getUseSettings() const { return useSettings_; }
 
-    ConfigSettings* getSettings() { return gameplaySettings_; }
-
-    PlayerProfile* fromFile(const String filename);
-    bool toFile(const String filename);
-
 private:
     String playerId_;
     String playerName_;
     String portraitFile_;
     bool useSettings_;
-    std::vector<NamedStatistic*> statistics_;
-    ConfigSettings* gameplaySettings_;
+    
+    NamedStatistics* statistics_;
+    ConfigItems* gameplaySettings_;
 };
-
-
 
 #endif /// __PLAYER_PROFILE_HEADER__
