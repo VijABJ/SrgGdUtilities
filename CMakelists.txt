@@ -1,0 +1,29 @@
+
+cmake_minimum_required (VERSION 3.4)
+project (SrgUtils)
+
+file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c*" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h*")
+add_library(${PROJECT_NAME} SHARED ${SOURCES} ${NATIVE_SOURCES})
+
+# this is for godot header files
+add_compile_definitions(TYPED_METHOD_BIND NOMINMAX GUID_WINDOWS)
+
+if(MSVC)
+  target_link_libraries(${PROJECT_NAME} Ole32)
+  target_link_libraries(${PROJECT_NAME} optimized libgodot-cpp.windows.template_debug.x86_64)
+  target_link_libraries(${PROJECT_NAME} debug libgodot-cpp.windows.template_debug.dev.x86_64)
+
+  set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+  )
+endif()
+
