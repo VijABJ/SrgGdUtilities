@@ -277,9 +277,7 @@ bool PathNamesCollection::isItemEnabled(const int64_t index) const
 
 void PathNamesCollection::_get_property_list(List<PropertyInfo>* p_list) const
 {
-    DEBUG("_get_property_list()");
     for (int i = 0; i < items_.size(); i++) {
-        DEBUG(vformat("item_%d", i));
         PropertyInfo pi = PropertyInfo(Variant::OBJECT, vformat("item_%d/Scanner", i), PROPERTY_HINT_RESOURCE_TYPE, "PathScannerBase");
         pi.usage &= ~(getScannerAt(i).is_null() ? PROPERTY_USAGE_STORAGE : 0);
         p_list->push_back(pi);
@@ -291,7 +289,6 @@ void PathNamesCollection::_get_property_list(List<PropertyInfo>* p_list) const
 }
 
 bool PathNamesCollection::_set(const StringName& p_name, const Variant& p_value) {
-    //DEBUG(vformat("_set(%s)", String(p_name)));
     auto components = String(p_name).split("/", true, 2);
     if (components.size() >= 2 && components[0].begins_with("item_") && components[0].trim_prefix("item_").is_valid_int()) {
         int item_index = components[0].trim_prefix("item_").to_int();

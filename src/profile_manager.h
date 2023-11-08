@@ -39,10 +39,14 @@ public:
     void loadProfiles();
     void saveProfile(PlayerProfile* profile);
 
+    bool getAutoCreateDefault() const { return autoCreateDefault_; }
+    void setAutoCreateDefault(const bool newState) { autoCreateDefault_ = newState; }
+
 private:
     bool autoLoad_;
     Ref<FileList> profileSource_;
 
+    bool autoCreateDefault_;
     std::vector<PlayerProfile*> profiles_;
     int64_t activeProfileIndex_;
 

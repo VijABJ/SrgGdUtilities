@@ -9,6 +9,7 @@ void ProfileManager::_bind_methods()
     DECLARE_PROPERTY(ProfileManager, AutoLoad, newState, Variant::BOOL);
     DECLARE_RESOURCE_PROPERTY(ProfileManager, ProfileSource, source, FileList);
     DECLARE_PROPERTY(ProfileManager, ActiveProfileIndex, index, Variant::INT);
+    DECLARE_PROPERTY(ProfileManager, AutoCreateDefault, newState, Variant::BOOL);
 
     ClassDB::bind_method(D_METHOD("getProfile", "index"), &ProfileManager::getProfile);
     ClassDB::bind_method(D_METHOD("getProfileByName", "playerName"), &ProfileManager::getProfileByName);
@@ -26,7 +27,7 @@ void ProfileManager::_bind_methods()
     ADD_SIGNAL(MethodInfo("active_profile_changed", PropertyInfo(Variant::OBJECT, "profile", PROPERTY_HINT_OBJECT_ID, "PlayerProfile")));
 }
 
-ProfileManager::ProfileManager() : autoLoad_(true), profileSource_(Ref<FileList>()), profiles_(), activeProfileIndex_(-1)
+ProfileManager::ProfileManager() : autoLoad_(true), profileSource_(Ref<FileList>()), autoCreateDefault_(true), profiles_(), activeProfileIndex_(-1)
 {}
 
 ProfileManager::~ProfileManager()
@@ -166,6 +167,12 @@ void ProfileManager::loadProfiles()
         from_json(j, profile);
 
         profiles_.push_back(profile);
+    }
+    if ((profiles_.size() == 0) && (autoCreateDefault_)) {
+        addNewProfileEx("Default", "default");
+    }
+    if (profiles_.size() > 0) {
+        setActiveProfileIndex(0);
     }
 }
 
