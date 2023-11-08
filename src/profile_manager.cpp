@@ -14,6 +14,7 @@ void ProfileManager::_bind_methods()
     ClassDB::bind_method(D_METHOD("getProfileByName", "playerName"), &ProfileManager::getProfileByName);
     ClassDB::bind_method(D_METHOD("getNameToIndex", "playerName"), &ProfileManager::getNameToIndex);
     ClassDB::bind_method(D_METHOD("getIndexOf", "profile"), &ProfileManager::getIndexOf);
+    ClassDB::bind_method(D_METHOD("getActiveProfile"), &ProfileManager::getActiveProfile);
 
     ClassDB::bind_method(D_METHOD("addNewProfile", "name"), &ProfileManager::addNewProfile);
     ClassDB::bind_method(D_METHOD("addNewProfileEx", "name", "id"), &ProfileManager::addNewProfileEx);
@@ -130,6 +131,7 @@ void ProfileManager::deleteProfile(const int64_t index)
     if (needActivating)
         setActiveProfileIndex(newSelectionIndex);
 }
+
 void ProfileManager::deleteProfileByname(const String playerName)
 {
     deleteProfile(getNameToIndex(playerName));
@@ -173,7 +175,7 @@ void ProfileManager::saveProfile(PlayerProfile* profile)
     to_json(j, profile);
 
     auto data = String(j.dump(4).data());
-    auto filename = profileSource_->getActualSourceFolder().path_join(profile->getPlayerId());
+    auto filename = profileSource_->getActualSourceFolder().path_join(profile->getPlayerId()) + ".json";
     auto file = FileAccess::open(filename, FileAccess::WRITE);
     file->store_line(data);
     file->close();

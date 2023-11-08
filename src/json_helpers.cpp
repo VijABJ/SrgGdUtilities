@@ -3,10 +3,13 @@
 #include "player_profile.h"
 
 
-void to_json(json& j, ConfigItems* source)
+void to_json(json& j, ConfigItems* settings)
 {
-    auto& settings = source->getSettings_();
-    for (auto& item : settings) {
+    if (settings == nullptr)
+        return;
+
+    auto& items = settings->getSettings_();
+    for (auto& item : items) {
         json entry;
         entry["name"] = item.first;
         switch (item.second->getType()) {
@@ -29,26 +32,29 @@ void to_json(json& j, ConfigItems* source)
 
 void from_json(json& j, ConfigItems* settings)
 {
+    if (settings == nullptr)
+        return;
+
     settings->clear();
+
     for (auto& [key, item] : j.items()) {
         std::string configKey = item["name"];
-        auto value = item["value"];
+        auto& value = item["value"];
 
         if (value.is_number_float()) {
-            double floatValue = static_cast<double>(value);
+            double floatValue = value;
             settings->add(configKey, floatValue);
         }
         if (value.is_number_integer()) {
-            int64_t intValue = static_cast<int64_t>(value);
+            int64_t intValue = value;
             settings->add(configKey, intValue);
         }
         else if (value.is_boolean()) {
-            bool boolValue = static_cast<bool>(value);
+            bool boolValue = value;
             settings->add(configKey, boolValue);
         }
-        else {
-            // treat as string
-            std::string stringValue = static_cast<std::string>(value);
+        else if (value.is_string()) {
+            std::string stringValue = value;
             settings->add(configKey, stringValue);
         }
     }
@@ -58,6 +64,9 @@ void from_json(json& j, ConfigItems* settings)
 
 void to_json(json& j, PlayerProfile* profile)
 {
+    if (profile == nullptr)
+        return;
+
     j["id"] = translate(profile->getPlayerId());
     j["name"] = translate(profile->getPlayerName());
     j["use_settings"] = profile->getUseSettings();
@@ -80,6 +89,9 @@ void to_json(json& j, PlayerProfile* profile)
 
 void from_json(json& j, PlayerProfile* profile)
 {
+    if (profile == nullptr)
+        return;
+
     profile->setPlayerId(translate(j["id"]));
     profile->setPlayerName(translate(j["name"]));
     profile->setPortraitFile(translate(j["portrait"]));
@@ -100,44 +112,3 @@ void from_json(json& j, PlayerProfile* profile)
     from_json(j["settings"], profile->getSettings());
 }
 
-
-
-
-
-//PlayerProfile* PlayerProfile::fromFile(const String filename)
-//{
-//    if(!FileAccess::file_exists(filename))
-//        return nullptr;
-//
-//    auto fileContents = std::string(FileAccess::get_file_as_string(filename).utf8().get_data());
-//    json j = json::parse(fileContents);
-//
-//    playerId_ = translate(j["id"]);
-//    playerName_ = translate(j["name"]);
-//    portraitFile_ = translate(j["portrait"]);
-//    useSettings_ = j["use_settings"];
-//
-//    int index = 0;
-//    json items = j["statistics"];
-//    if(items != nullptr) {
-//        while(index < items.size()) {
-//            std::string statName = items[index++];
-//            double statValue = items[index++];
-//
-//            auto item = memnew(NamedStatistic);
-//            item->setStringId(translate(statName));
-//            item->setValue(statValue);
-//            statistics_.push_back(item);
-//        }
-//    }
-//
-//    from_json(j["settings"], gameplaySettings_);
-//
-//    return this;
-//}
-//
-//bool PlayerProfile::toFile(const String filename)
-//{
-//
-//    return true;
-//}

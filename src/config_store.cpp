@@ -5,15 +5,17 @@
 
 void ConfigStore::_bind_methods()
 {
-    DECLARE_PROPERTY(ConfigStore, ActivePlayer, newPlayer, Variant::STRING, getActivePlayer, setActivePlayer);
-    DECLARE_PROPERTY_READONLY(ConfigStore, SystemSettings, Variant::OBJECT, getSystemSettings);
-    DECLARE_PROPERTY_READONLY(ConfigStore, GameplaySettings, Variant::OBJECT, getGameplaySettings);
-    DECLARE_PROPERTY(ConfigStore, AutoLoad, newState, Variant::BOOL, getAutoLoad, setAutoLoad);
+    DECLARE_PROPERTY(ConfigStore, ActivePlayer, newPlayer, Variant::STRING);
+    DECLARE_PROPERTY(ConfigStore, AutoLoad, newState, Variant::BOOL);
+    DECLARE_PROPERTY(ConfigStore, AutoSave, newState, Variant::BOOL);
     DECLARE_RESOURCE_PROPERTY(ConfigStore, RuntimeSource, source, FileLocator);
     DECLARE_RESOURCE_PROPERTY(ConfigStore, DefaultSource, source, FileLocator);
 
     ClassDB::bind_method(D_METHOD("save"), &ConfigStore::save);
     ClassDB::bind_method(D_METHOD("load"), &ConfigStore::load);
+
+    ClassDB::bind_method(D_METHOD("getSystemSettings"), &ConfigStore::getSystemSettings);
+    ClassDB::bind_method(D_METHOD("getSystemSettings"), &ConfigStore::getSystemSettings);
 }
 
 ConfigStore::ConfigStore() : activePlayer_(String()), systemSettings_(nullptr), gameplaySettings_(nullptr),
@@ -25,7 +27,9 @@ autoLoad_(false), runtimeSource_(Ref<FileLocator>()), defaultSource_(Ref<FileLoc
 
 ConfigStore::~ConfigStore()
 {
-    //save();
+    if (autoSave_) 
+        save();
+    
     if (systemSettings_ != nullptr)
         memdelete(systemSettings_);
     if (gameplaySettings_ != nullptr)
@@ -45,6 +49,9 @@ void ConfigStore::load()
     bool saveAfter = !FileAccess::file_exists(runtimeFile);
     String fileToUse = saveAfter ? defaultFile : runtimeFile;
 
+    if (!FileAccess::file_exists(fileToUse))
+        return;
+
     auto fileContents = std::string(FileAccess::get_file_as_string(fileToUse).utf8().get_data());
     json j = json::parse(fileContents);
 
@@ -53,6 +60,7 @@ void ConfigStore::load()
     from_json(j["gameplay"], gameplaySettings_);
 
     if (saveAfter) {
+        DEBUG("should save here...");
         saveActual(runtimeFile);
     }
 }
@@ -60,6 +68,7 @@ void ConfigStore::load()
 void ConfigStore::saveActual(const String filename)
 {
     DEBUG(filename);
+
     // shouldn't be necessary really, but just in case
     ensureFolderExists(filename.get_base_dir());
 
@@ -76,14 +85,25 @@ void ConfigStore::saveActual(const String filename)
     j["gameplay"] = gameplay;
 
     auto data = String(j.dump(4).data());
-    auto file = FileAccess::open(filename, FileAccess::WRITE);
-    file->store_string(data);
-    file->close();
 
-    DEBUG("save complete");
+    try {
+        auto file = FileAccess::open(filename, FileAccess::WRITE);
+        file->store_string(data);
+        file->close();
+        DEBUG("save complete");
+    }
+    catch(...)
+    {
+        DEBUG("Save failed.");
+    }
 }
+
 void ConfigStore::save()
 {
+    // we might not have a source at all, like during creation.
+    if (!runtimeSource_.is_valid())
+        return;
+
     auto runtimeFile = runtimeSource_->getResolvedPath();
     saveActual(runtimeFile);
 }

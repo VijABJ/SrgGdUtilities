@@ -5,6 +5,7 @@
 #include "files_source.h"
 #include "config_store.h"
 #include "profile_manager.h"
+#include "runtime_environment.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -30,12 +31,12 @@ void initialize_utility_objects_module(ModuleInitializationLevel p_level)
     ClassDB::register_class<FloatConfigItem>();
     ClassDB::register_class<StringConfigItem>();
     ClassDB::register_class<ConfigItems>();
-
     ClassDB::register_class<ConfigStore>();
 
     ClassDB::register_class<NamedStatistics>();
     ClassDB::register_class<PlayerProfile>();
     ClassDB::register_class<ProfileManager>();
+    ClassDB::register_class<RuntimeEnvironment>();
 }
 
 void uninitialize_utility_objects_module(ModuleInitializationLevel p_level)

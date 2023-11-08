@@ -6,7 +6,7 @@
 using json = nlohmann::json;
 
 class ConfigItems;
-void to_json(json& j, ConfigItems* source);
+void to_json(json& j, ConfigItems* settings);
 void from_json(json& j, ConfigItems* settings);
 
 class PlayerProfile;

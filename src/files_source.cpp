@@ -10,7 +10,8 @@ void PathResolver::_bind_methods()
     DECLARE_PROPERTY(PathResolver, SourceFolder, newFolder, Variant::STRING);
     DECLARE_PROPERTY(PathResolver, CreateFolderIfMissing, newState, Variant::BOOL);
     DECLARE_PROPERTY(PathResolver, AppRelative, newState, Variant::BOOL);
-    DECLARE_PROPERTY_READONLY(PathResolver, ActualSourceFolder, Variant::STRING, getActualSourceFolder);
+
+    ClassDB::bind_method(D_METHOD("getActualSourceFolder"), &PathResolver::getActualSourceFolder);
 }
 
 PathResolver::PathResolver() : sourceFolder_(String()), createFolderIfMissing_(false), appRelative_(false)
@@ -37,7 +38,8 @@ String PathResolver::folderActual() const
 void FileLocator::_bind_methods()
 {
     DECLARE_PROPERTY(FileLocator, BaseFilename, newName, Variant::STRING);
-    DECLARE_PROPERTY_READONLY(FileLocator, ResolvedPath, Variant::STRING, getResolvedPath);
+    
+    ClassDB::bind_method(D_METHOD("getResolvedPath"), &FileLocator::getResolvedPath);
 }
 
 FileLocator::FileLocator() : baseFilename_(String())

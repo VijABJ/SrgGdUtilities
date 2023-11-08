@@ -28,6 +28,8 @@ public:
 
     bool getAutoLoad() const { return autoLoad_; }
     void setAutoLoad(const bool newState) { autoLoad_ = newState; }
+    bool getAutoSave() const { return autoSave_; }
+    void setAutoSave(const bool newState) { autoSave_ = newState; }
 
     void load();
     void save();
@@ -38,6 +40,7 @@ private:
     ConfigItems* gameplaySettings_;
 
     bool autoLoad_;
+    bool autoSave_;
 
     Ref<FileLocator> runtimeSource_;
     Ref<FileLocator> defaultSource_;

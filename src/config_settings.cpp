@@ -46,7 +46,7 @@ ConfigItem* BoolConfigItem::create(const bool value)
 
 void IntConfigItem::_bind_methods()
 {
-    DECLARE_PROPERTY(BoolConfigItem, Value, value, Variant::INT);
+    DECLARE_PROPERTY(IntConfigItem, Value, value, Variant::INT);
 }
 
 ConfigItem* IntConfigItem::create(const int64_t value)
@@ -58,7 +58,7 @@ ConfigItem* IntConfigItem::create(const int64_t value)
 
 void FloatConfigItem::_bind_methods()
 {
-    DECLARE_PROPERTY(BoolConfigItem, Value, value, Variant::FLOAT);
+    DECLARE_PROPERTY(FloatConfigItem, Value, value, Variant::FLOAT);
 }
 
 ConfigItem* FloatConfigItem::create(const double value)
@@ -70,7 +70,7 @@ ConfigItem* FloatConfigItem::create(const double value)
 
 void StringConfigItem::_bind_methods()
 {
-    DECLARE_PROPERTY(BoolConfigItem, Value, value, Variant::STRING);
+    DECLARE_PROPERTY(StringConfigItem, Value, value, Variant::STRING);
 }
 
 ConfigItem* StringConfigItem::create(const std::string& value)
@@ -111,7 +111,8 @@ ConfigItem* StringConfigItem::create(const std::string& value)
 
      ClassDB::bind_method(D_METHOD("getSettings"), &ConfigItems::getSettings);
 
-     ADD_SIGNAL(MethodInfo("apply_setting", PropertyInfo(Variant::STRING, "setting_name"), PropertyInfo(Variant::OBJECT, "setting")));
+     ADD_SIGNAL(MethodInfo("apply_setting", PropertyInfo(Variant::STRING, "setting_name"), 
+         PropertyInfo(Variant::OBJECT, "setting", PROPERTY_HINT_OBJECT_ID, "ConfigItem")));
  }
 
  ConfigItem* ConfigItems::getSetting(String name)
