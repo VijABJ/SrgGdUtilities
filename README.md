@@ -21,7 +21,7 @@ Currently, this contains, mostly resource types:
 * Json helpers to read/write profiles and configuration items.
 * Environment class to wrap everything into one resource you can edit.
 
-## First off, this project requires:**
+## First off, this project requires:
 
 * godot-cpp being installed, built, and configured in a peer folder
 * It uses CMake 3.4+ to generate the files (more on this later)
