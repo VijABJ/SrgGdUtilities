@@ -398,5 +398,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 # random things
-~*.dll
+*.dll
+*.lib
+*.exp
 
