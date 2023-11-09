@@ -15,11 +15,17 @@ void ConfigStore::_bind_methods()
     ClassDB::bind_method(D_METHOD("load"), &ConfigStore::load);
 
     ClassDB::bind_method(D_METHOD("getSystemSettings"), &ConfigStore::getSystemSettings);
-    ClassDB::bind_method(D_METHOD("getSystemSettings"), &ConfigStore::getSystemSettings);
+    ClassDB::bind_method(D_METHOD("getGameplaySettings"), &ConfigStore::getGameplaySettings);
+
+    ClassDB::bind_method(D_METHOD("onApplySetting", "setting_name", "setting"), &ConfigStore::onApplySetting);
+
+    ADD_SIGNAL(MethodInfo("apply_setting", PropertyInfo(Variant::STRING, "setting_name"),
+        PropertyInfo(Variant::OBJECT, "setting", PROPERTY_HINT_OBJECT_ID, "ConfigItem")));
+
 }
 
 ConfigStore::ConfigStore() : activePlayer_(String()), systemSettings_(nullptr), gameplaySettings_(nullptr),
-autoLoad_(false), runtimeSource_(Ref<FileLocator>()), defaultSource_(Ref<FileLocator>())
+autoLoad_(false), autoSave_(true), runtimeSource_(Ref<FileLocator>()), defaultSource_(Ref<FileLocator>())
 {
     systemSettings_ = memnew(ConfigItems);
     gameplaySettings_ = memnew(ConfigItems);
@@ -27,13 +33,18 @@ autoLoad_(false), runtimeSource_(Ref<FileLocator>()), defaultSource_(Ref<FileLoc
 
 ConfigStore::~ConfigStore()
 {
-    if (autoSave_) 
+    if (autoSave_)
         save();
-    
+
     if (systemSettings_ != nullptr)
         memdelete(systemSettings_);
     if (gameplaySettings_ != nullptr)
         memdelete(gameplaySettings_);
+}
+
+void ConfigStore::onApplySetting(String setting_name, ConfigItem* setting)
+{
+    emit_signal("apply_setting", setting_name, setting);
 }
 
 void ConfigStore::load()
@@ -60,15 +71,12 @@ void ConfigStore::load()
     from_json(j["gameplay"], gameplaySettings_);
 
     if (saveAfter) {
-        DEBUG("should save here...");
         saveActual(runtimeFile);
     }
 }
 
 void ConfigStore::saveActual(const String filename)
 {
-    DEBUG(filename);
-
     // shouldn't be necessary really, but just in case
     ensureFolderExists(filename.get_base_dir());
 
@@ -92,7 +100,7 @@ void ConfigStore::saveActual(const String filename)
         file->close();
         DEBUG("save complete");
     }
-    catch(...)
+    catch (...)
     {
         DEBUG("Save failed.");
     }
@@ -102,6 +110,10 @@ void ConfigStore::save()
 {
     // we might not have a source at all, like during creation.
     if (!runtimeSource_.is_valid())
+        return;
+
+    // if either settings instance aren't initialized, do nothing
+    if ((systemSettings_ == nullptr) || (gameplaySettings_ == nullptr))
         return;
 
     auto runtimeFile = runtimeSource_->getResolvedPath();

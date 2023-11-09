@@ -34,6 +34,9 @@ public:
     void load();
     void save();
 
+protected:
+    void onApplySetting(String setting_name, ConfigItem* setting);
+
 private:
     String activePlayer_;
     ConfigItems* systemSettings_;

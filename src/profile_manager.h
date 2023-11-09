@@ -23,6 +23,7 @@ public:
 
     int64_t getActiveProfileIndex() const { return activeProfileIndex_; }
     void setActiveProfileIndex(const int64_t index);
+    void activateProfileByName(String playerName);
 
     PlayerProfile* getActiveProfile();
     PlayerProfile* getProfile(const int64_t index);

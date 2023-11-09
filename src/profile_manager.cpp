@@ -16,12 +16,16 @@ void ProfileManager::_bind_methods()
     ClassDB::bind_method(D_METHOD("getNameToIndex", "playerName"), &ProfileManager::getNameToIndex);
     ClassDB::bind_method(D_METHOD("getIndexOf", "profile"), &ProfileManager::getIndexOf);
     ClassDB::bind_method(D_METHOD("getActiveProfile"), &ProfileManager::getActiveProfile);
+    ClassDB::bind_method(D_METHOD("activateProfileByName", "playerName"), &ProfileManager::activateProfileByName);
 
     ClassDB::bind_method(D_METHOD("addNewProfile", "name"), &ProfileManager::addNewProfile);
     ClassDB::bind_method(D_METHOD("addNewProfileEx", "name", "id"), &ProfileManager::addNewProfileEx);
 
     ClassDB::bind_method(D_METHOD("deleteProfile", "index"), &ProfileManager::deleteProfile);
     ClassDB::bind_method(D_METHOD("deleteProfileByName", "name"), &ProfileManager::deleteProfileByname);
+
+    ClassDB::bind_method(D_METHOD("loadProfiles"), &ProfileManager::loadProfiles);
+    ClassDB::bind_method(D_METHOD("saveProfile", "profile"), &ProfileManager::saveProfile);
 
     ADD_SIGNAL(MethodInfo("profile_added", PropertyInfo(Variant::OBJECT, "profile", PROPERTY_HINT_OBJECT_ID, "PlayerProfile")));
     ADD_SIGNAL(MethodInfo("active_profile_changed", PropertyInfo(Variant::OBJECT, "profile", PROPERTY_HINT_OBJECT_ID, "PlayerProfile")));
@@ -48,6 +52,11 @@ void ProfileManager::setActiveProfileIndex(const int64_t index)
     if (index >= profiles_.size()) activeProfileIndex_ = -1;
     auto profile = getProfile(activeProfileIndex_);
     emit_signal("active_profile_changed", profile);
+}
+
+void ProfileManager::activateProfileByName(String playerName)
+{
+    setActiveProfileIndex(getNameToIndex(playerName));
 }
 
 PlayerProfile* ProfileManager::getActiveProfile()

@@ -31,6 +31,9 @@ public:
     Ref<PathNamesCollection> getPortraits() { return portraits_; }
     void setPortraits(Ref<PathNamesCollection> portraits) { portraits_ = portraits; }
 
+    Ref<FileLocator> getDefaultPortraitFile() { return defaultPortraitFile_; }
+    void setDefaultPortraitFile(Ref<FileLocator> portraitFile) { defaultPortraitFile_ = portraitFile; }
+
     // this is required for proper functioning 
     void initialize();
 
@@ -42,7 +45,7 @@ private:
     Ref<ConfigStore> configuration_;
     Ref<ProfileManager> profiles_;
     Ref<PathNamesCollection> portraits_;
-
+    Ref<FileLocator> defaultPortraitFile_;
 };
 
 

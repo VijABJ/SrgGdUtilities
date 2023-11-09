@@ -6,6 +6,7 @@ void RuntimeEnvironment::_bind_methods()
     DECLARE_RESOURCE_PROPERTY(RuntimeEnvironment, Configuration, configuration, ConfigStore);
     DECLARE_RESOURCE_PROPERTY(RuntimeEnvironment, Profiles, profileManager, ProfileManager);
     DECLARE_RESOURCE_PROPERTY(RuntimeEnvironment, Portraits, portraits, PathNamesCollection);
+    DECLARE_RESOURCE_PROPERTY(RuntimeEnvironment, DefaultPortraitFile, portraitFile, FileLocator);
 
     ClassDB::bind_method(D_METHOD("initialize"), &RuntimeEnvironment::initialize);
     ClassDB::bind_method(D_METHOD("onProfileChanged", "profile"), &RuntimeEnvironment::onProfileChanged);
@@ -19,7 +20,8 @@ void RuntimeEnvironment::_bind_methods()
 RuntimeEnvironment::RuntimeEnvironment() : 
     configuration_(Ref<ConfigStore>()),
     profiles_(Ref<ProfileManager>()),
-    portraits_(Ref<PathNamesCollection>())
+    portraits_(Ref<PathNamesCollection>()),
+    defaultPortraitFile_(Ref<FileLocator>())
 {}
 
 void RuntimeEnvironment::initialize()
