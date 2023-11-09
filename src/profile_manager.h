@@ -27,6 +27,7 @@ public:
 
     PlayerProfile* getActiveProfile();
     PlayerProfile* getProfile(const int64_t index);
+    Array getProfiles();
     PlayerProfile* getProfileByName(const String playerName);
     int64_t getNameToIndex(const String playerName);
     int64_t getIndexOf(PlayerProfile* profile);

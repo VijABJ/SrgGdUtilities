@@ -12,6 +12,7 @@ void ProfileManager::_bind_methods()
     DECLARE_PROPERTY(ProfileManager, AutoCreateDefault, newState, Variant::BOOL);
 
     ClassDB::bind_method(D_METHOD("getProfile", "index"), &ProfileManager::getProfile);
+    ClassDB::bind_method(D_METHOD("getProfiles"), &ProfileManager::getProfiles);
     ClassDB::bind_method(D_METHOD("getProfileByName", "playerName"), &ProfileManager::getProfileByName);
     ClassDB::bind_method(D_METHOD("getNameToIndex", "playerName"), &ProfileManager::getNameToIndex);
     ClassDB::bind_method(D_METHOD("getIndexOf", "profile"), &ProfileManager::getIndexOf);
@@ -73,6 +74,11 @@ PlayerProfile* ProfileManager::getProfile(const int64_t index)
         return profiles_[activeProfileIndex_];
 
     return nullptr;
+}
+
+Array ProfileManager::getProfiles()
+{
+    return translate(profiles_);
 }
 
 PlayerProfile* ProfileManager::getProfileByName(const String playerName)

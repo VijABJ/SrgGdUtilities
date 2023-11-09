@@ -123,7 +123,11 @@ DirectoryList::DirectoryList()
 
 void DirectoryList::gatherItems(const String baseFolder)
 {
+    if (baseFolder.ends_with("/"))
+        baseFolder.rstrip("/");
+
     auto subStrStartIndex = baseFolder.length() + 1;
+
     scanRecursive(baseFolder, subStrStartIndex);
 }
 
@@ -152,6 +156,9 @@ FileList::FileList() : suffixFilter_(String())
 
 void FileList::gatherItems(const String baseFolder)
 {
+    if (baseFolder.ends_with("/"))
+        baseFolder.rstrip("/");
+
     auto subStrStartIndex = baseFolder.length() + 1;
 
     Array filters = split(suffixFilter_, ",");
