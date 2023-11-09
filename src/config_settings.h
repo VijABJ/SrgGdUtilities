@@ -90,8 +90,8 @@ public:
     IntConfigItem() : value_() { type_ = T_INT; }
     virtual ~IntConfigItem() {}
 
-    bool getValue() const { return value_; }
-    void setValue(const bool value) {
+    int64_t getValue() const { return value_; }
+    void setValue(const int64_t value) {
         value_ = value;
         changed_ = value_.hasChanged();
     }
