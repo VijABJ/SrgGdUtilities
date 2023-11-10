@@ -34,6 +34,7 @@ public:
 
     PlayerProfile* addNewProfile(const String name);
     PlayerProfile* addNewProfileEx(const String name, const String id);
+    bool isNameAvailable(const String name);
 
     void deleteProfile(const int64_t index);
     void deleteProfileByname(const String playerName);

@@ -21,6 +21,7 @@ void ProfileManager::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("addNewProfile", "name"), &ProfileManager::addNewProfile);
     ClassDB::bind_method(D_METHOD("addNewProfileEx", "name", "id"), &ProfileManager::addNewProfileEx);
+    ClassDB::bind_method(D_METHOD("isNameAvailable", "name"), &ProfileManager::isNameAvailable);
 
     ClassDB::bind_method(D_METHOD("deleteProfile", "index"), &ProfileManager::deleteProfile);
     ClassDB::bind_method(D_METHOD("deleteProfileByName", "name"), &ProfileManager::deleteProfileByname);
@@ -128,6 +129,16 @@ PlayerProfile* ProfileManager::addNewProfileEx(const String name, const String i
     emit_signal("profile_added", profile);
 
     return profile;
+}
+
+bool ProfileManager::isNameAvailable(const String name)
+{
+    for (auto& profile : profiles_) {
+        if (profile->getPlayerName() == name)
+            return false;
+    }
+
+    return true;
 }
 
 void ProfileManager::deleteProfile(const int64_t index)

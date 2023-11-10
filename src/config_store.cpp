@@ -21,7 +21,6 @@ void ConfigStore::_bind_methods()
 
     ADD_SIGNAL(MethodInfo("apply_setting", PropertyInfo(Variant::STRING, "setting_name"),
         PropertyInfo(Variant::OBJECT, "setting", PROPERTY_HINT_OBJECT_ID, "ConfigItem")));
-
 }
 
 ConfigStore::ConfigStore() : activePlayer_(String()), systemSettings_(nullptr), gameplaySettings_(nullptr),
