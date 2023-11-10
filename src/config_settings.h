@@ -231,8 +231,6 @@ private:
     void remove(const std::string & settingName);
 };
 
-
-
 VARIANT_ENUM_CAST(ConfigItem::ConfigValueType);
 
 #endif /// __CONFIG_SETTINGS_HEADER__
