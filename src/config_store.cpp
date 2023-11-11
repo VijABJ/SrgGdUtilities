@@ -11,6 +11,14 @@ void ConfigStore::_bind_methods()
     DECLARE_RESOURCE_PROPERTY(ConfigStore, RuntimeSource, source, FileLocator);
     DECLARE_RESOURCE_PROPERTY(ConfigStore, DefaultSource, source, FileLocator);
 
+    ClassDB::bind_method(D_METHOD("mark"), &ConfigStore::mark);
+    ClassDB::bind_method(D_METHOD("restore"), &ConfigStore::restore);
+    ClassDB::bind_method(D_METHOD("touch"), &ConfigStore::touch);
+    ClassDB::bind_method(D_METHOD("hasChanges"), &ConfigStore::hasChanges);
+
+    ClassDB::bind_method(D_METHOD("applyChanges"), &ConfigStore::applyChanges);
+    ClassDB::bind_method(D_METHOD("undoPendingChanges"), &ConfigStore::undoPendingChanges);
+
     ClassDB::bind_method(D_METHOD("save"), &ConfigStore::save);
     ClassDB::bind_method(D_METHOD("load"), &ConfigStore::load);
 
@@ -27,7 +35,9 @@ ConfigStore::ConfigStore() : activePlayer_(String()), systemSettings_(nullptr), 
 autoLoad_(false), autoSave_(true), runtimeSource_(Ref<FileLocator>()), defaultSource_(Ref<FileLocator>())
 {
     systemSettings_ = memnew(ConfigItems);
+    systemSettings_->connect("apply_setting", Callable(this, "onApplySetting"));
     gameplaySettings_ = memnew(ConfigItems);
+    gameplaySettings_->connect("apply_setting", Callable(this, "onApplySetting"));
 }
 
 ConfigStore::~ConfigStore()
@@ -45,6 +55,42 @@ void ConfigStore::onApplySetting(String setting_name, ConfigItem* setting)
 {
     emit_signal("apply_setting", setting_name, setting);
 }
+
+void ConfigStore::mark()
+{
+    systemSettings_->mark();
+    gameplaySettings_->mark();
+}
+
+void ConfigStore::restore()
+{
+    systemSettings_->restore();
+    gameplaySettings_->restore();
+}
+
+void ConfigStore::touch()
+{
+    systemSettings_->touch();
+    gameplaySettings_->touch();
+}
+
+bool ConfigStore::hasChanges() const
+{
+    return systemSettings_->hasChanges() || gameplaySettings_->hasChanges();
+}
+
+void ConfigStore::applyChanges()
+{
+    systemSettings_->applyChanges();
+    gameplaySettings_->applyChanges();
+    save();
+}
+void ConfigStore::undoPendingChanges()
+{
+    systemSettings_->undoPendingChanges();
+    gameplaySettings_->undoPendingChanges();
+}
+
 
 void ConfigStore::load()
 {

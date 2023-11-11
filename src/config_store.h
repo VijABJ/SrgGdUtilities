@@ -31,6 +31,14 @@ public:
     bool getAutoSave() const { return autoSave_; }
     void setAutoSave(const bool newState) { autoSave_ = newState; }
 
+    void mark();
+    void restore();
+    void touch();
+    bool hasChanges() const;
+
+    void applyChanges();
+    void undoPendingChanges();
+
     void load();
     void save();
 
