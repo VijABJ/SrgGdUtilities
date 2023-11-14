@@ -184,13 +184,16 @@ ConfigItem* ConfigItems::add(const std::string& name, ConfigItem* setting)
     // note that the item passed in WILL NOT be added if the
     // 'name' entry is already occupied!  instead, it will
     // be deallocated!  watch out!
+    DEBUG(vformat("Setting::add(%s)", translate(name)));
     auto it = settings_.find(name);
     if (it == settings_.end()) {
+        DEBUG("Adding...");
         settings_[name] = setting;
     }
     else {
         // same type. update the value of the existing one
         if (it->second->isSameType(*setting)) {
+            DEBUG("Copying...");
             it->second->copyFrom(*setting);
         }
         // we're not going to overwrite an existing item

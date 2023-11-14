@@ -75,7 +75,12 @@ protected:
     virtual void internalRestore() { value_.restore(); }
     virtual void internalTouch() { value_.touch(); }
     virtual void performCopy(const ConfigItem & other) {
-        value_ = (dynamic_cast<const BoolConfigItem&>(other)).value_;
+        DEBUG(vformat("before copy = %d", value_?1:0));
+        auto otherValue = (dynamic_cast<const BoolConfigItem&>(other)).value_;
+        if (value_ != otherValue) {
+            setValue(otherValue);
+            DEBUG(vformat("after copy: value = %d", value_ ? 1 : 0));
+        }
     }
 
 private:
@@ -104,7 +109,12 @@ protected:
     virtual void internalRestore() { value_.restore(); }
     virtual void internalTouch() { value_.touch(); }
     virtual void performCopy(const ConfigItem & other) {
-        value_ = (dynamic_cast<const IntConfigItem&>(other)).value_;
+        DEBUG(vformat("before copy = %d", value_));
+        auto otherValue = (dynamic_cast<const IntConfigItem&>(other)).value_;
+        if (value_ != otherValue) {
+            setValue(otherValue);
+            DEBUG(vformat("after copy = %d", value_));
+        }
     }
 
 private:
@@ -133,7 +143,10 @@ protected:
     virtual void internalRestore() { value_.restore(); }
     virtual void internalTouch() { value_.touch(); }
     virtual void performCopy(const ConfigItem & other) {
-        value_ = (dynamic_cast<const FloatConfigItem&>(other)).value_;
+        auto otherValue = (dynamic_cast<const FloatConfigItem&>(other)).value_;
+        if (value_ != otherValue) {
+            setValue(otherValue);
+        }
     }
 
 private:
@@ -153,6 +166,10 @@ public:
         value_ = translate(value);
         changed_ = value_.hasChanged();
     }
+    void setStdStringValue(const std::string& value) {
+        value_ = value;
+        changed_ = value_.hasChanged();
+    }
 
     operator std::string() { return value_; }
     static ConfigItem* create(const std::string& value);
@@ -162,7 +179,7 @@ protected:
     virtual void internalRestore() { value_.restore(); }
     virtual void internalTouch() { value_.touch(); }
     virtual void performCopy(const ConfigItem & other) {
-        value_ = (dynamic_cast<const StringConfigItem&>(other)).value_;
+        setStdStringValue((dynamic_cast<const StringConfigItem&>(other)).value_);
     }
 
 private:
