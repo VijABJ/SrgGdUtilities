@@ -75,11 +75,9 @@ protected:
     virtual void internalRestore() { value_.restore(); }
     virtual void internalTouch() { value_.touch(); }
     virtual void performCopy(const ConfigItem & other) {
-        DEBUG(vformat("before copy = %d", value_?1:0));
         auto otherValue = (dynamic_cast<const BoolConfigItem&>(other)).value_;
         if (value_ != otherValue) {
             setValue(otherValue);
-            DEBUG(vformat("after copy: value = %d", value_ ? 1 : 0));
         }
     }
 
@@ -109,11 +107,9 @@ protected:
     virtual void internalRestore() { value_.restore(); }
     virtual void internalTouch() { value_.touch(); }
     virtual void performCopy(const ConfigItem & other) {
-        DEBUG(vformat("before copy = %d", value_));
         auto otherValue = (dynamic_cast<const IntConfigItem&>(other)).value_;
         if (value_ != otherValue) {
             setValue(otherValue);
-            DEBUG(vformat("after copy = %d", value_));
         }
     }
 

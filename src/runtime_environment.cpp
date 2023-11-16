@@ -26,18 +26,15 @@ RuntimeEnvironment::RuntimeEnvironment() :
 
 void RuntimeEnvironment::initialize()
 {
-    DEBUG("initialize()");
     configuration_->connect("apply_setting", Callable(this, "onSettingApplied"));
     profiles_->connect("active_profile_changed", Callable(this, "onProfileChanged"));
     //
     configuration_->load();
     profiles_->loadProfiles();
-    DEBUG("initialize complete.");
 }
 
 void RuntimeEnvironment::onProfileChanged(PlayerProfile* profile)
 {
-    DEBUG("onProfileChanged");
     if (profile == nullptr) {
         configuration_->setActivePlayer("");
     }
@@ -50,6 +47,5 @@ void RuntimeEnvironment::onProfileChanged(PlayerProfile* profile)
 
 void RuntimeEnvironment::onSettingApplied(String settingName, ConfigItem* setting)
 {
-    DEBUG("onSettingApplied");
     emit_signal("apply_setting", settingName, setting);
 }

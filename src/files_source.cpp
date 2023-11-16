@@ -315,7 +315,6 @@ bool PathNamesCollection::_set(const StringName& p_name, const Variant& p_value)
 
 bool PathNamesCollection::_get(const StringName& p_name, Variant& r_ret) const 
 {
-    //DEBUG(vformat("_get(%s)", String(p_name)));
     auto components = String(p_name).split("/", true, 2);
     if (components.size() >= 2 && components[0].begins_with("item_") && components[0].trim_prefix("item_").is_valid_int()) {
         int item_index = components[0].trim_prefix("item_").to_int();

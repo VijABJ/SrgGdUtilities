@@ -58,42 +58,36 @@ void ConfigStore::onApplySetting(String setting_name, ConfigItem* setting)
 
 void ConfigStore::mark()
 {
-    DEBUG("mark");
     systemSettings_->mark();
     gameplaySettings_->mark();
 }
 
 void ConfigStore::restore()
 {
-    DEBUG("restore");
     systemSettings_->restore();
     gameplaySettings_->restore();
 }
 
 void ConfigStore::touch()
 {
-    DEBUG("touch");
     systemSettings_->touch();
     gameplaySettings_->touch();
 }
 
 bool ConfigStore::hasChanges() const
 {
-    DEBUG("hasChanges");
     bool result = systemSettings_->hasChanges() || gameplaySettings_->hasChanges();
     return result;
 }
 
 void ConfigStore::applyChanges()
 {
-    DEBUG("apply");
     systemSettings_->applyChanges();
     gameplaySettings_->applyChanges();
     save();
 }
 void ConfigStore::undoPendingChanges()
 {
-    DEBUG("undo");
     systemSettings_->undoPendingChanges();
     gameplaySettings_->undoPendingChanges();
 }
@@ -150,7 +144,6 @@ void ConfigStore::saveActual(const String filename)
         auto file = FileAccess::open(filename, FileAccess::WRITE);
         file->store_string(data);
         file->close();
-        DEBUG("save complete");
     }
     catch (...)
     {
