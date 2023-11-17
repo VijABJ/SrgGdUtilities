@@ -71,7 +71,7 @@ PlayerProfile* ProfileManager::getActiveProfile()
 
 PlayerProfile* ProfileManager::getProfile(const int64_t index)
 {
-    if ((activeProfileIndex_ >= 0) && (activeProfileIndex_ < profiles_.size()))
+    if ((index >= 0) && (index < profiles_.size()))
         return profiles_[activeProfileIndex_];
 
     return nullptr;
@@ -117,16 +117,19 @@ PlayerProfile* ProfileManager::addNewProfile(const String name)
 // do NOT add a duplicate.  rather, just return an existing one.
 PlayerProfile* ProfileManager::addNewProfileEx(const String name, const String id)
 {
+    DEBUG(vformat("addNewProfileEx(%s, %s)", name, id));
     auto item = getProfileByName(name);
     if (item != nullptr)
         return item;
 
+    DEBUG("creating profile...");
     auto profile = memnew(PlayerProfile);
     profile->setPlayerId(id);
     profile->setPlayerName(name);
     profiles_.push_back(profile);
 
     emit_signal("profile_added", profile);
+    DEBUG("profile added.");
 
     return profile;
 }
