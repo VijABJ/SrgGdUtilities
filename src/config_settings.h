@@ -229,6 +229,8 @@ public:
     // this will iterate on changed values ONLY, and call the godot event.
     // after this, changed flags will be reset
     void applyChanges();
+    // for when things get reset mid program. only C++ side for now
+    void forceApplyChanges();
     // this will reset all values that have changed to their previous values
     void undoPendingChanges();
     // copy settings from source.  will set changed flag if necessary.

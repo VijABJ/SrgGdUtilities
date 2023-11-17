@@ -31,6 +31,8 @@ public:
     bool getAutoSave() const { return autoSave_; }
     void setAutoSave(const bool newState) { autoSave_ = newState; }
 
+    void resetToDefaults();
+
     void mark();
     void restore();
     void touch();
@@ -57,6 +59,7 @@ private:
     Ref<FileLocator> defaultSource_;
 
     void saveActual(const String filename);
+    void loadActual(const String filename);
 };
 
 #endif /// __SRG_CONFIGURATION_STORAGE__

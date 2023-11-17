@@ -304,6 +304,15 @@ void ConfigItems::applyChanges()
     }
 }
 
+void ConfigItems::forceApplyChanges()
+{
+    for (auto& item : settings_) {
+        auto setting = item.second;
+        String item_name(item.first.data());
+        emit_signal("apply_setting", item_name, setting);
+    }
+}
+
 void ConfigItems::undoPendingChanges()
 {
     for (auto& item : settings_) {

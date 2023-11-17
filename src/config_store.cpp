@@ -21,6 +21,7 @@ void ConfigStore::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("save"), &ConfigStore::save);
     ClassDB::bind_method(D_METHOD("load"), &ConfigStore::load);
+    ClassDB::bind_method(D_METHOD("resetToDefaults"), &ConfigStore::resetToDefaults);
 
     ClassDB::bind_method(D_METHOD("getSystemSettings"), &ConfigStore::getSystemSettings);
     ClassDB::bind_method(D_METHOD("getGameplaySettings"), &ConfigStore::getGameplaySettings);
@@ -54,6 +55,22 @@ ConfigStore::~ConfigStore()
 void ConfigStore::onApplySetting(String setting_name, ConfigItem* setting)
 {
     emit_signal("apply_setting", setting_name, setting);
+}
+
+void ConfigStore::resetToDefaults()
+{
+    // default source must exist, or this is pointless
+    if (!defaultSource_.is_valid())
+        return;
+
+    auto runtimeFile = runtimeSource_->getResolvedPath();
+    auto defaultFile = defaultSource_->getResolvedPath();
+
+    loadActual(defaultFile);
+    saveActual(runtimeFile);
+
+    systemSettings_->forceApplyChanges();
+    gameplaySettings_->forceApplyChanges();
 }
 
 void ConfigStore::mark()
@@ -92,6 +109,18 @@ void ConfigStore::undoPendingChanges()
     gameplaySettings_->undoPendingChanges();
 }
 
+void ConfigStore::loadActual(const String filename)
+{
+    if (!FileAccess::file_exists(filename))
+        return;
+
+    auto fileContents = std::string(FileAccess::get_file_as_string(filename).utf8().get_data());
+    json j = json::parse(fileContents);
+
+    activePlayer_ = String(std::string(j["player"]).data());
+    from_json(j["system"], systemSettings_);
+    from_json(j["gameplay"], gameplaySettings_);
+}
 
 void ConfigStore::load()
 {
@@ -106,15 +135,7 @@ void ConfigStore::load()
     bool saveAfter = !FileAccess::file_exists(runtimeFile);
     String fileToUse = saveAfter ? defaultFile : runtimeFile;
 
-    if (!FileAccess::file_exists(fileToUse))
-        return;
-
-    auto fileContents = std::string(FileAccess::get_file_as_string(fileToUse).utf8().get_data());
-    json j = json::parse(fileContents);
-
-    activePlayer_ = String(std::string(j["player"]).data());
-    from_json(j["system"], systemSettings_);
-    from_json(j["gameplay"], gameplaySettings_);
+    loadActual(fileToUse);
 
     if (saveAfter) {
         saveActual(runtimeFile);
