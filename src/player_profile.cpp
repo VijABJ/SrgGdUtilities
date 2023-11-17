@@ -45,8 +45,8 @@ void PlayerProfile::_bind_methods()
     DECLARE_PROPERTY(PlayerProfile, PortraitFile, filename, Variant::STRING);
     DECLARE_PROPERTY(PlayerProfile, UseSettings, state, Variant::BOOL);
 
-    DECLARE_PROPERTY_READONLY(PlayerProfile, Statistics, Variant::OBJECT, getStatistics);
-    DECLARE_PROPERTY_READONLY(PlayerProfile, Settings, Variant::OBJECT, getSettings);
+    ClassDB::bind_method(D_METHOD("getStatistics"), &PlayerProfile::getStatistics);
+    ClassDB::bind_method(D_METHOD("getSettings"), &PlayerProfile::getSettings);
 }
 
 PlayerProfile::PlayerProfile() :
