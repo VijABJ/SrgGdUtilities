@@ -1,6 +1,7 @@
 #include "profile_manager.h"
 #include "cguid.h"
 #include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/dir_access.hpp>
 #include "../../SrgGdHelpers/include/nlohmann/json.hpp"
 using json = nlohmann::json;
 
@@ -117,19 +118,16 @@ PlayerProfile* ProfileManager::addNewProfile(const String name)
 // do NOT add a duplicate.  rather, just return an existing one.
 PlayerProfile* ProfileManager::addNewProfileEx(const String name, const String id)
 {
-    DEBUG(vformat("addNewProfileEx(%s, %s)", name, id));
     auto item = getProfileByName(name);
     if (item != nullptr)
         return item;
 
-    DEBUG("creating profile...");
     auto profile = memnew(PlayerProfile);
     profile->setPlayerId(id);
     profile->setPlayerName(name);
     profiles_.push_back(profile);
 
     emit_signal("profile_added", profile);
-    DEBUG("profile added.");
 
     return profile;
 }
@@ -153,8 +151,14 @@ void ProfileManager::deleteProfile(const int64_t index)
     auto newSelectionIndex = index < activeProfileIndex_ ? activeProfileIndex_ - 1 : activeProfileIndex_;
     bool needActivating = newSelectionIndex != activeProfileIndex_;
 
+    // delete from our list
     auto profile = profiles_[index];
     profiles_.erase(profiles_.begin() + index);
+
+    // now we need to delete from disk
+    auto files = profileSource_->getItemsLong();
+    auto& filename = files[index];
+    DirAccess::remove_absolute(filename);
 
     memdelete(profile);
 
