@@ -10,8 +10,8 @@ add_compile_definitions(TYPED_METHOD_BIND NOMINMAX GUID_WINDOWS)
 
 if(MSVC)
   target_link_libraries(${PROJECT_NAME} Ole32)
-  target_link_libraries(${PROJECT_NAME} optimized libgodot-cpp.windows.template_debug.x86_64)
-  target_link_libraries(${PROJECT_NAME} debug libgodot-cpp.windows.template_debug.dev.x86_64)
+  target_link_libraries(${PROJECT_NAME} optimized libgodot-cpp.windows.template_release.x86_64)
+  target_link_libraries(${PROJECT_NAME} debug libgodot-cpp.windows.template_debug.x86_64)
 
   set_target_properties(${PROJECT_NAME}
     PROPERTIES
