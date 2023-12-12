@@ -21,8 +21,8 @@ class PathResolver GDX_SUBCLASS(Resource)
     GDX_CLASS_PREFIX(PathResolver, Resource);
 
 public:
-    PathResolver();
-    virtual ~PathResolver() {};
+    PathResolver() = default;
+    virtual ~PathResolver() = default;
 
     String getSourceFolder() const { return sourceFolder_; }
     void setSourceFolder(const String source) { sourceFolder_ = source; };
@@ -36,11 +36,28 @@ public:
     String getActualSourceFolder() const { return folderActual(); }
 
 protected:
-    String sourceFolder_;
-    bool createFolderIfMissing_;
-    bool appRelative_;
+    String sourceFolder_{};
+    bool createFolderIfMissing_{};
+    bool appRelative_{};
 
-    String folderActual() const;
+    virtual String folderActual() const;
+};
+
+class DynamicPathResolver GDX_SUBCLASS(PathResolver)
+{
+    GDX_CLASS_PREFIX(DynamicPathResolver, PathResolver);
+
+public:
+    DynamicPathResolver() = default;
+    virtual ~DynamicPathResolver() = default;
+
+    String getDesignTimeFolder() const { return designTimeFolder_; }
+    void setDesignTimeFolder(const String source) { designTimeFolder_ = source; };
+
+protected:
+    String designTimeFolder_{};
+
+    String folderActual() const override;
 };
 
 /// wraps a file location to make it easier to use between design time and runtime

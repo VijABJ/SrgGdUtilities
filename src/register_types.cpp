@@ -19,6 +19,7 @@ void initialize_utility_objects_module(ModuleInitializationLevel p_level)
         return;
 
     ClassDB::register_class<PathResolver>();
+    ClassDB::register_class<DynamicPathResolver>();
     ClassDB::register_class<FileLocator>();
     ClassDB::register_class<PathScannerBase>();
     ClassDB::register_class<DirectoryList>();

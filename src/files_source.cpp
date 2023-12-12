@@ -14,9 +14,6 @@ void PathResolver::_bind_methods()
     ClassDB::bind_method(D_METHOD("getActualSourceFolder"), &PathResolver::getActualSourceFolder);
 }
 
-PathResolver::PathResolver() : sourceFolder_(String()), createFolderIfMissing_(false), appRelative_(false)
-{}
-
 String PathResolver::folderActual() const
 {
     OS* os = OS::get_singleton();
@@ -32,6 +29,33 @@ String PathResolver::folderActual() const
 
     return result;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DynamicPathResolver::_bind_methods()
+{
+    DECLARE_PROPERTY(DynamicPathResolver, DesignTimeFolder, newFolder, Variant::STRING);
+}
+
+String DynamicPathResolver::folderActual() const
+{
+    OS* os = OS::get_singleton();
+    if (os->has_feature("editor")) {
+        return designTimeFolder_;
+    }
+    else {
+        auto result = sourceFolder_;
+        if (appRelative_) {
+            auto exePath = os->get_executable_path().get_base_dir();
+            auto result = exePath.path_join(sourceFolder_);
+        }
+        if (createFolderIfMissing_) {
+            ensureFolderExists(result);
+        }
+        return result;
+    }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
