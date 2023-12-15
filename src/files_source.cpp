@@ -47,7 +47,7 @@ String DynamicPathResolver::folderActual() const
         auto result = sourceFolder_;
         if (appRelative_) {
             auto exePath = os->get_executable_path().get_base_dir();
-            auto result = exePath.path_join(sourceFolder_);
+            result = exePath.path_join(sourceFolder_);
         }
         if (createFolderIfMissing_) {
             ensureFolderExists(result);
