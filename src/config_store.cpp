@@ -32,12 +32,9 @@ void ConfigStore::_bind_methods()
         PropertyInfo(Variant::OBJECT, "setting", PROPERTY_HINT_OBJECT_ID, "ConfigItem")));
 }
 
-ConfigStore::ConfigStore() : activePlayer_(String()), systemSettings_(nullptr), gameplaySettings_(nullptr),
-autoLoad_(false), autoSave_(true), runtimeSource_(Ref<FileLocator>()), defaultSource_(Ref<FileLocator>())
+ConfigStore::ConfigStore() 
 {
-    systemSettings_ = memnew(ConfigItems);
     systemSettings_->connect("apply_setting", Callable(this, "onApplySetting"));
-    gameplaySettings_ = memnew(ConfigItems);
     gameplaySettings_->connect("apply_setting", Callable(this, "onApplySetting"));
 }
 
@@ -46,10 +43,8 @@ ConfigStore::~ConfigStore()
     if (autoSave_)
         save();
 
-    if (systemSettings_ != nullptr)
-        memdelete(systemSettings_);
-    if (gameplaySettings_ != nullptr)
-        memdelete(gameplaySettings_);
+    memdelete(systemSettings_);
+    memdelete(gameplaySettings_);
 }
 
 void ConfigStore::onApplySetting(String setting_name, ConfigItem* setting)

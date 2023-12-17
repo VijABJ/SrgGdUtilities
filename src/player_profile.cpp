@@ -19,11 +19,13 @@ Dictionary NamedStatistics::getItems() const
 
     return result;
 }
+
 void NamedStatistics::setItems(Dictionary items)
 {
     items_.clear();
     appendItems(items);
 }
+
 void NamedStatistics::appendItems(Dictionary items)
 {
     auto keys = items.keys();
@@ -34,9 +36,7 @@ void NamedStatistics::appendItems(Dictionary items)
     }
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 void PlayerProfile::_bind_methods()
 {
@@ -47,14 +47,6 @@ void PlayerProfile::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("getStatistics"), &PlayerProfile::getStatistics);
     ClassDB::bind_method(D_METHOD("getSettings"), &PlayerProfile::getSettings);
-}
-
-PlayerProfile::PlayerProfile() :
-    playerId_(), playerName_(), portraitFile_(), statistics_(),
-    useSettings_(true), gameplaySettings_(nullptr)
-{
-    gameplaySettings_ = memnew(ConfigItems);
-    statistics_ = memnew(NamedStatistics);
 }
 
 PlayerProfile::~PlayerProfile()

@@ -66,8 +66,8 @@ class FileLocator GDX_SUBCLASS(PathResolver)
     GDX_CLASS_PREFIX(FileLocator, PathResolver);
 
 public:
-    FileLocator();
-    virtual ~FileLocator() {};
+    FileLocator() = default;
+    virtual ~FileLocator() = default;
 
     String getBaseFilename() const { return baseFilename_; }
     void setBaseFilename(const String newName) { baseFilename_ = newName; }
@@ -75,7 +75,7 @@ public:
     String getResolvedPath() const;
 
 private:
-    String baseFilename_;
+    String baseFilename_{};
 };
 
 ///
@@ -89,8 +89,8 @@ class PathScannerBase GDX_SUBCLASS(PathResolver)
     GDX_CLASS_PREFIX(PathScannerBase, PathResolver);
 
 public:
-    PathScannerBase();
-    virtual ~PathScannerBase() {};
+    PathScannerBase() = default;
+    virtual ~PathScannerBase() = default;
 
     bool getRecursive() const { return recursive_; }
     void setRecursive(bool newState) { recursive_ = newState; }
@@ -103,9 +103,9 @@ public:
     Array getItemsLong() { return retrieveItems(true); }
 
 protected:
-    bool recursive_;    
-    bool alwaysRefresh_;
-    std::vector<String> items_;
+    bool recursive_{};
+    bool alwaysRefresh_{};
+    std::vector<String> items_{};
 
     Array retrieveItems(const bool prefixItems = false);
 
@@ -121,8 +121,8 @@ class DirectoryList GDX_SUBCLASS(PathScannerBase)
     GDX_CLASS_PREFIX(DirectoryList, PathScannerBase);
 
 public:
-    DirectoryList();
-    virtual ~DirectoryList() {};
+    DirectoryList() = default;
+    virtual ~DirectoryList() = default;
 
 protected:
     virtual void gatherItems(const String baseFolder);
@@ -134,14 +134,14 @@ class FileList GDX_SUBCLASS(PathScannerBase)
     GDX_CLASS_PREFIX(FileList, PathScannerBase);
 
 public:
-    FileList();
-    virtual ~FileList() {};
+    FileList() = default;
+    virtual ~FileList() = default;
 
     String getSuffixFilter() const { return suffixFilter_; }
     void setSuffixFilter(const String suffixFilter) { suffixFilter_ = suffixFilter; }
 
 protected:
-    String suffixFilter_;
+    String suffixFilter_{};
 
     void retrieveFilenames();
     Array getItems(const bool fileNamesOnly = true);
@@ -156,8 +156,8 @@ class PathNamesCollection GDX_SUBCLASS(Resource)
     GDX_CLASS_PREFIX(PathNamesCollection, Resource);
 
 public:
-    PathNamesCollection();
-    virtual ~PathNamesCollection() {};
+    PathNamesCollection() = default;
+    virtual ~PathNamesCollection() = default;
 
     Array getItems();
     Array getItemsLong();
@@ -172,11 +172,11 @@ public:
 
 protected:
     struct CollectibleItem {
-        Ref<PathScannerBase> Scanner = Ref<PathScannerBase>();
+        Ref<PathScannerBase> Scanner = Ref<PathScannerBase>{};
         bool Enabled = true;
     };
 
-    std::vector<CollectibleItem> items_;
+    std::vector<CollectibleItem> items_{};
 
     bool _set(const StringName& p_name, const Variant& p_value);
     bool _get(const StringName& p_name, Variant& r_ret) const;

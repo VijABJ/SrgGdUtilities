@@ -48,15 +48,15 @@ protected:
     void onApplySetting(String setting_name, ConfigItem* setting);
 
 private:
-    String activePlayer_;
-    ConfigItems* systemSettings_;
-    ConfigItems* gameplaySettings_;
+    String activePlayer_{};
+    ConfigItems* systemSettings_{ memnew(ConfigItems) };
+    ConfigItems* gameplaySettings_{ memnew(ConfigItems) };
 
-    bool autoLoad_;
-    bool autoSave_;
+    bool autoLoad_{};
+    bool autoSave_{true};
 
-    Ref<FileLocator> runtimeSource_;
-    Ref<FileLocator> defaultSource_;
+    Ref<FileLocator> runtimeSource_{};
+    Ref<FileLocator> defaultSource_{};
 
     void saveActual(const String filename);
     void loadActual(const String filename);

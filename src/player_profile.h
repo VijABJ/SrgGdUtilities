@@ -10,21 +10,20 @@ using namespace godot;
 #include <map>
 #include <vector>
 
-
 class NamedStatistics GDX_SUBCLASS(Node)
 {
     GDX_CLASS_PREFIX(NamedStatistics, Node);
 
 public:
-    NamedStatistics() : items_() {}
-    virtual ~NamedStatistics() {}
+    NamedStatistics() = default;
+    virtual ~NamedStatistics() = default;
 
     Dictionary getItems() const;
     void setItems(Dictionary items);
     void appendItems(Dictionary items);
 
 private:
-    std::map<std::string, std::string> items_;
+    std::map<std::string, std::string> items_{};
 };
 
 
@@ -33,7 +32,7 @@ class PlayerProfile GDX_SUBCLASS(Node)
     GDX_CLASS_PREFIX(PlayerProfile, Node);
 
 public:
-    PlayerProfile();
+    PlayerProfile() = default;
     virtual ~PlayerProfile();
 
     NamedStatistics* getStatistics() const { return statistics_; }
@@ -50,13 +49,13 @@ public:
     bool getUseSettings() const { return useSettings_; }
 
 private:
-    String playerId_;
-    String playerName_;
-    String portraitFile_;
-    bool useSettings_;
+    String playerId_{};
+    String playerName_{};
+    String portraitFile_{};
+    bool useSettings_{ true };
     
-    NamedStatistics* statistics_;
-    ConfigItems* gameplaySettings_;
+    NamedStatistics* statistics_{ memnew(NamedStatistics) };
+    ConfigItems* gameplaySettings_{ memnew(ConfigItems) };
 };
 
 #endif /// __PLAYER_PROFILE_HEADER__

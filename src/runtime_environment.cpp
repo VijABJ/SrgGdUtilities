@@ -1,6 +1,5 @@
 #include "runtime_environment.h"
 
-
 void RuntimeEnvironment::_bind_methods()
 {
     DECLARE_RESOURCE_PROPERTY(RuntimeEnvironment, Configuration, configuration, ConfigStore);
@@ -14,15 +13,7 @@ void RuntimeEnvironment::_bind_methods()
 
     ADD_SIGNAL(MethodInfo("active_profile_changed", PropertyInfo(Variant::OBJECT, "profile", PROPERTY_HINT_OBJECT_ID, "PlayerProfile")));
     ADD_SIGNAL(MethodInfo("apply_setting", PropertyInfo(Variant::STRING, "setting_name"), PropertyInfo(Variant::OBJECT, "setting", PROPERTY_HINT_OBJECT_ID, "ConfigItem")));
-
 }
-
-RuntimeEnvironment::RuntimeEnvironment() : 
-    configuration_(Ref<ConfigStore>()),
-    profiles_(Ref<ProfileManager>()),
-    portraits_(Ref<PathNamesCollection>()),
-    defaultPortraitFile_(Ref<FileLocator>())
-{}
 
 void RuntimeEnvironment::initialize()
 {

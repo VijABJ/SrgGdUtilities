@@ -34,9 +34,6 @@ void ProfileManager::_bind_methods()
     ADD_SIGNAL(MethodInfo("active_profile_changed", PropertyInfo(Variant::OBJECT, "profile", PROPERTY_HINT_OBJECT_ID, "PlayerProfile")));
 }
 
-ProfileManager::ProfileManager() : autoLoad_(true), profileSource_(Ref<FileList>()), autoCreateDefault_(true), profiles_(), activeProfileIndex_(-1)
-{}
-
 ProfileManager::~ProfileManager()
 {
     for (auto profile : profiles_) {

@@ -12,8 +12,8 @@ class ConfigItem GDX_SUBCLASS(Node)
     GDX_CLASS_PREFIX(ConfigItem, Node);
 
 public:
-    ConfigItem();
-    virtual ~ConfigItem() {}
+    ConfigItem() = default;
+    virtual ~ConfigItem() = default;
 
     enum ConfigValueType { T_BLANK = 0, T_BOOL, T_INT, T_FLOAT, T_STRING };
 
@@ -44,8 +44,8 @@ public:
     ConfigValueType getType() const { return type_; }
 
 protected:
-    ConfigValueType type_;
-    bool changed_;
+    ConfigValueType type_{ ConfigValueType::T_BLANK };
+    bool changed_{};
 
     virtual void internalMark() {}
     virtual void internalRestore() {}
@@ -53,13 +53,15 @@ protected:
     virtual void performCopy(const ConfigItem& other) {}
 };
 
+VARIANT_ENUM_CAST(ConfigItem::ConfigValueType);
+
 class BoolConfigItem GDX_SUBCLASS(ConfigItem)
 {
     GDX_CLASS_PREFIX(BoolConfigItem, ConfigItem);
 
 public:
-    BoolConfigItem() : value_() { type_ = T_BOOL; }
-    virtual ~BoolConfigItem() {}
+    BoolConfigItem() { type_ = T_BOOL; }
+    virtual ~BoolConfigItem() = default;
 
     bool getValue() const { return value_; }
     void setValue(const bool value) {
@@ -82,7 +84,7 @@ protected:
     }
 
 private:
-    undoable_t<bool> value_;
+    undoable_t<bool> value_{};
 };
 
 class IntConfigItem GDX_SUBCLASS(ConfigItem)
@@ -90,8 +92,8 @@ class IntConfigItem GDX_SUBCLASS(ConfigItem)
     GDX_CLASS_PREFIX(IntConfigItem, ConfigItem);
 
 public:
-    IntConfigItem() : value_() { type_ = T_INT; }
-    virtual ~IntConfigItem() {}
+    IntConfigItem() { type_ = T_INT; }
+    virtual ~IntConfigItem() = default;
 
     int64_t getValue() const { return value_; }
     void setValue(const int64_t value) {
@@ -114,7 +116,7 @@ protected:
     }
 
 private:
-    undoable_t<int64_t> value_;
+    undoable_t<int64_t> value_{};
 };
 
 class FloatConfigItem GDX_SUBCLASS(ConfigItem)
@@ -122,8 +124,8 @@ class FloatConfigItem GDX_SUBCLASS(ConfigItem)
     GDX_CLASS_PREFIX(FloatConfigItem, ConfigItem);
 
 public:
-    FloatConfigItem() : value_() { type_ = T_FLOAT; }
-    virtual ~FloatConfigItem() {}
+    FloatConfigItem() { type_ = T_FLOAT; }
+    virtual ~FloatConfigItem() = default;
 
     double getValue() const { return value_; }
     void setValue(const double value) {
@@ -146,7 +148,7 @@ protected:
     }
 
 private:
-    undoable_t<double> value_;
+    undoable_t<double> value_{};
 };
 
 class StringConfigItem GDX_SUBCLASS(ConfigItem)
@@ -154,8 +156,8 @@ class StringConfigItem GDX_SUBCLASS(ConfigItem)
     GDX_CLASS_PREFIX(StringConfigItem, ConfigItem);
 
 public:
-    StringConfigItem() : value_() { type_ = T_STRING; }
-    virtual ~StringConfigItem() {}
+    StringConfigItem() { type_ = T_STRING; }
+    virtual ~StringConfigItem() = default;
 
     String getValue() const { return translate(value_); }
     void setValue(const String value) {
@@ -179,7 +181,7 @@ protected:
     }
 
 private:
-    undoable_t<std::string> value_;
+    undoable_t<std::string> value_{};
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +191,7 @@ class ConfigItems GDX_SUBCLASS(Node)
     GDX_CLASS_PREFIX(ConfigItems, Node);
 
 public:
-    ConfigItems() : settings_() {}
+    ConfigItems() = default;
     virtual ~ConfigItems();
 
     using settings_list_t = std::map<std::string, ConfigItem*>;
@@ -241,13 +243,9 @@ public:
     void clear() { settings_.clear(); }
 
 private:
-    settings_list_t settings_;
+    settings_list_t settings_{};
 
     void remove(const std::string & settingName);
 };
-
-
-
-VARIANT_ENUM_CAST(ConfigItem::ConfigValueType);
 
 #endif /// __CONFIG_SETTINGS_HEADER__

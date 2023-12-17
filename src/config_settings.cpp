@@ -26,10 +26,6 @@ void ConfigItem::_bind_methods()
     BIND_ENUM_CONSTANT(T_STRING);
 }
 
-ConfigItem::ConfigItem() : type_(ConfigValueType::T_BLANK), changed_(false)
-{
-}
-
 //////////////////////////////////////////////////////////////////////////////////////
 
 void BoolConfigItem::_bind_methods()

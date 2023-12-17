@@ -2,7 +2,6 @@
 #ifndef __SRG_PROFILE_MANAGER_HEADER__
 #define __SRG_PROFILE_MANAGER_HEADER__
 
-
 #include "files_source.h"
 #include "config_store.h"
 #include "player_profile.h"
@@ -12,7 +11,7 @@ class ProfileManager GDX_SUBCLASS(Resource)
     GDX_CLASS_PREFIX(ProfileManager, Resource);
 
 public:
-    ProfileManager();
+    ProfileManager() = default;
     virtual ~ProfileManager();
 
     bool getAutoLoad() const { return autoLoad_; }
@@ -46,18 +45,14 @@ public:
     void setAutoCreateDefault(const bool newState) { autoCreateDefault_ = newState; }
 
 private:
-    bool autoLoad_;
-    Ref<FileList> profileSource_;
+    bool autoLoad_{true};
+    Ref<FileList> profileSource_{};
 
-    bool autoCreateDefault_;
-    std::vector<PlayerProfile*> profiles_;
-    int64_t activeProfileIndex_;
+    bool autoCreateDefault_{ true };
+    std::vector<PlayerProfile*> profiles_{};
+    int64_t activeProfileIndex_{ -1 };
 
     void performAutoLoading();
 };
-
-
-
-
 
 #endif /// __SRG_PROFILE_MANAGER_HEADER__

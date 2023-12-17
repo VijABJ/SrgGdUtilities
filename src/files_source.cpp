@@ -66,9 +66,6 @@ void FileLocator::_bind_methods()
     ClassDB::bind_method(D_METHOD("getResolvedPath"), &FileLocator::getResolvedPath);
 }
 
-FileLocator::FileLocator() : baseFilename_(String())
-{}
-
 String FileLocator::getResolvedPath() const
 {
     auto workFolder = folderActual();
@@ -86,9 +83,6 @@ void PathScannerBase::_bind_methods()
     ClassDB::bind_method(D_METHOD("getItemsLong"), &PathScannerBase::getItemsLong);
     ClassDB::bind_method(D_METHOD("clear"), &PathScannerBase::clear);
 }
-
-PathScannerBase::PathScannerBase() : recursive_(false), alwaysRefresh_(false), items_()
-{}
 
 Array PathScannerBase::retrieveItems(const bool prefixItems)
 {
@@ -142,9 +136,6 @@ void DirectoryList::_bind_methods()
 {
 }
 
-DirectoryList::DirectoryList()
-{}
-
 void DirectoryList::gatherItems(const String baseFolder)
 {
     if (baseFolder.ends_with("/"))
@@ -174,9 +165,6 @@ void FileList::_bind_methods()
 {
     DECLARE_PROPERTY(FileList, SuffixFilter, newFilter, Variant::STRING);
 }
-
-FileList::FileList() : suffixFilter_(String())
-{}
 
 void FileList::gatherItems(const String baseFolder)
 {
@@ -241,10 +229,6 @@ void PathNamesCollection::_bind_methods()
         "setCount", "getCount");
 }
 
-PathNamesCollection::PathNamesCollection() : items_()
-{
-}
-
 int64_t PathNamesCollection::getCount()
 {
     return items_.size();
@@ -284,11 +268,9 @@ Array PathNamesCollection::getItemsLong()
     return result;
 }
 
-void PathNamesCollection::clear() {
-    //if (primary_.is_valid())
-    //    primary_->clear();
-    //if (secondary_.is_valid())
-    //    secondary_->clear();
+void PathNamesCollection::clear() 
+{
+    items_.clear();
 }
 
 Ref<PathScannerBase> PathNamesCollection::getScannerAt(const int64_t index) const
@@ -298,6 +280,7 @@ Ref<PathScannerBase> PathNamesCollection::getScannerAt(const int64_t index) cons
 
     return Ref<PathScannerBase>();
 }
+
 bool PathNamesCollection::isItemEnabled(const int64_t index) const
 {
     if (index >= 0 && index < items_.size())
